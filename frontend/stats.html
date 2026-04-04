@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Statystyki</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="vertical-menu">
+  <a href="index.html" class="active">Strona główna</a>
+  <a href="products.html">Produkty</a>
+  <a href="stats.html">Statystyki</a>
+</div>
+
+<main class="container">
+  <h1>Statystyki systemu</h1>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <h3>Liczba produktów</h3>
+      <div id="product-count" class="stat-value">—</div>
+    </div>
+    <div class="stat-card">
+      <h3>ID instancji backendu</h3>
+      <div id="instance-id" class="stat-value small">—</div>
+    </div>
+    <div class="stat-card">
+      <h3>Nagłówek X-Cache-Status</h3>
+      <div id="cache-status" class="stat-value small">—</div>
+    </div>
+  </div>
+
+  <button id="refresh-btn" class="btn" style="margin-top:2rem;">Odśwież statystyki</button>
+</main>
+
+<script src="js/stats.js"></script>
+</body>
+</html>
