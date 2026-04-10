@@ -1,19 +1,17 @@
-async function loadStats() {
-    try {
-        const res = await fetch('/api/stats');
-        const data = await res.json();
+function loadStats() {
+    fetch("/api/stats")
+        .then(function (response) {
+            const cache = response.headers.get("X-Cache-Status");
+            document.getElementById("cache-status").textContent = cache || "brak";
 
-        document.getElementById('product-count').textContent = data.total_products;
-        document.getElementById('instance-id').textContent = data.instance_id;
-
-        const cacheStatus = res.headers.get('X-Cache-Status') || 'brak nagłówka';
-        document.getElementById('cache-status').textContent = cacheStatus;
-    } catch (err) {
-        document.getElementById('product-count').textContent = 'Błąd';
-        document.getElementById('instance-id').textContent = err.message;
-    }
+            return response.json();
+        })
+        .then(function (data) {
+            document.getElementById("product-count").textContent = data.total_products;
+            document.getElementById("instance-id").textContent = data.instance_id;
+        });
 }
 
-document.getElementById('refresh-btn').addEventListener('click', loadStats);
+document.getElementById("refresh-btn").onclick = loadStats;
 
 loadStats();
