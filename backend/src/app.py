@@ -41,9 +41,9 @@ def get_stats():
     })
 
 
-@app.route("/health", methods=["GET"])
-def health():
-    return jsonify({"status": "ok", "instance_id": INSTANCE_ID})
+#@app.route("/health", methods=["GET"])
+#def health():
+#    return jsonify({"status": "ok", "instance_id": INSTANCE_ID})
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))

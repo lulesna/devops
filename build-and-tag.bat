@@ -1,3 +1,5 @@
+docker network create siec-product-dashboard
+
 docker build -t product-dashboard-backend:v1 --build-arg IMAGE_VERSION=v1 ./backend/
 docker build -t product-dashboard-frontend:v2 ./frontend/
 
