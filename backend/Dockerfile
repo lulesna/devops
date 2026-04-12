@@ -11,9 +11,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
+RUN mkdir -p /data
+
 EXPOSE 5000
 
-RUN adduser -D appuser
+RUN adduser -D appuser && mkdir -p /data && chown appuser:appuser /data
 USER appuser
 
 CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "1", "src.app:app"]

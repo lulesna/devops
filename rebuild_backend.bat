@@ -1,5 +1,4 @@
-docker stop api-a api-b
-docker rm api-a api-b
-docker build -t product-dashboard-backend:v1 --build-arg IMAGE_VERSION=v1 ./backend/
-docker run -d --name api-a --network siec-product-dashboard -e INSTANCE_ID=instancja-a product-dashboard-backend:v1
-docker run -d --name api-b --network siec-product-dashboard -e INSTANCE_ID=instancja-b product-dashboard-backend:v1
+docker stop app
+docker rm app
+docker build -t product-dashboard-backend:v2 --build-arg IMAGE_VERSION=v2 ./backend/
+docker run -d --name app --network back-net -e INSTANCE_ID=instancja-a -v items-data:/data product-dashboard-backend:v2
