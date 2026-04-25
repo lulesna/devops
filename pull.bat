@@ -1,8 +1,9 @@
-docker network create siec-product-dashboard
+docker network create back-net
+docker network create front-net
 
-docker pull llesna/product-dashboard-backend:v1
+docker pull llesna/product-dashboard-backend:v2
 docker pull llesna/product-dashboard-frontend:v2
 
-docker run -d --name api-a --network siec-product-dashboard -e INSTANCE_ID=instancja-a llesna/product-dashboard-backend:v1
-docker run -d --name api-b --network siec-product-dashboard -e INSTANCE_ID=instancja-b llesna/product-dashboard-backend:v1
-docker run -d --name nginx-proxy --network siec-product-dashboard -p 80:80 llesna/product-dashboard-frontend:v2
+docker run -d --name app --network back-net -v items-data:/data llesna/product-dashboard-backend:v2
+docker run -d --name nginx-proxy --network front-net -p 80:80 llesna/product-dashboard-frontend:v2
+docker network connect back-net nginx-proxy
