@@ -1,24 +1,32 @@
+function deleteProduct(id) {
+    fetch("/api/items/" + id, { method: "DELETE" })
+        .then(function () {
+            loadProducts();
+        });
+}
+
 function loadProducts() {
     fetch("/api/items")
         .then(function (response) {
             return response.json();
         })
         .then(function (data) {
-            const container = document.getElementById("products-list");
+            var container = document.getElementById("products-list");
 
             if (data.items.length === 0) {
                 container.innerHTML = "<p>Brak produktów. Dodaj pierwszy!</p>";
                 return;
             }
 
-            let html = "<table class='product-table'>";
-            html += "<tr><th>ID</th><th>Nazwa</th><th>Cena (PLN)</th></tr>";
+            var html = "<table class='product-table'>";
+            html += "<tr><th>ID</th><th>Nazwa</th><th>Cena (PLN)</th><th></th></tr>";
 
-            for (let i = 0; i < data.items.length; i++) {
+            for (var i = 0; i < data.items.length; i++) {
                 html += "<tr>";
                 html += "<td>" + data.items[i].id + "</td>";
                 html += "<td>" + data.items[i].name + "</td>";
                 html += "<td>" + data.items[i].price + "</td>";
+                html += "<td><button onclick='deleteProduct(" + data.items[i].id + ")' class='btn-delete'>Usuń</button></td>";
                 html += "</tr>";
             }
 
