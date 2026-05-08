@@ -1,8 +1,3 @@
-rename compose.override.yml compose.override.yml.bak
+rename compose.override.yml compose.override.yml.txt
 docker compose down
-docker compose up -d --build
-
-curl.exe http://localhost/api/stats
-curl.exe http://localhost/api/items
-curl.exe http://localhost/api/items
-curl.exe http://localhost/api/stats
+docker compose up -d
