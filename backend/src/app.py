@@ -18,7 +18,7 @@ def get_db():
         port=int(os.environ.get("DB_PORT", 5432)),
         dbname=os.environ.get("POSTGRES_DB", "products"),
         user=os.environ.get("POSTGRES_USER", "products"),
-        password=os.environ.get("POSTGRES_PASSWORD", "secret123"),
+        password=os.environ.get("POSTGRES_PASSWORD", "postgres"),
     )
 
 
