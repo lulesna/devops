@@ -1,67 +1,93 @@
 name: CI Pipeline
 
+# Triggery: push na master + pull_request na master
 on:
   push:
     branches: [master]
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
   pull_request:
     branches: [master]
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
+
+# Zmienna globalna zdefiniowana na poziomie workflow
+env:
+  PYTHON_VERSION: "3.12"
 
 jobs:
-  lint:
-    name: Lint
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
 
-      - name: Setup Python
+  # Job lint: Checkout → Setup Python → pip install -r requirements.txt → flake8 --max-line-length=120
+  lint:
+    name: Lint (flake8)
+    runs-on: ubuntu-latest
+    # Timeout: timeout-minutes na co najmniej jednym jobie
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repozytorium
+        uses: actions/checkout@v4
+
+      - name: Setup Python ${{ env.PYTHON_VERSION }}
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: ${{ env.PYTHON_VERSION }}
+          # Cache: Cache pip zależności
+          cache: "pip"
 
-      - name: Install dependencies
+      # Step names: Każdy step musi mieć opisowy name
+      - name: Instalacja zaleznosci
         run: pip install -r backend/requirements.txt
 
-      - name: Run flake8
+      - name: Uruchomienie flake8
         run: flake8 --max-line-length=120 backend/src/
 
+  # Job test: needs: lint → Checkout → Setup Python → pip install -r requirements.txt → pytest backend/tests/ -v
   test:
-    name: Tests
+    name: Tests (pytest)
     runs-on: ubuntu-latest
     needs: lint
+    timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v5
+      - name: Checkout repozytorium
+        uses: actions/checkout@v4
 
-      - name: Setup Python
+      - name: Setup Python ${{ env.PYTHON_VERSION }}
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
 
-      - name: Install dependencies
+      - name: Instalacja zaleznosci
         run: pip install -r backend/requirements.txt
 
-      - name: Run tests
+      - name: Uruchomienie testow
         run: pytest backend/tests/ -v
 
+  # Job build: needs: test → Checkout → Setup Python → pip install -r requirements.txt → docker build
   build:
-    name: Build
+    name: Build (Docker)
     runs-on: ubuntu-latest
     needs: test
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v5
+      - name: Checkout repozytorium
+        uses: actions/checkout@v4
 
-      - name: Build backend image
+      - name: Budowanie obrazu backend
         run: docker build -t product-dashboard-backend:ci ./backend/
 
-      - name: Build frontend image
+      - name: Budowanie obrazu frontend
         run: docker build -t product-dashboard-frontend:ci ./frontend/
 
-      - name: Verify images
+      - name: Weryfikacja obrazow
         run: docker images | grep product-dashboard
 
       - name: Step Summary
         run: |
           echo "## CI Build Results" >> $GITHUB_STEP_SUMMARY
-          echo "- Lint: passed" >> $GITHUB_STEP_SUMMARY
-          echo "- Tests: passed" >> $GITHUB_STEP_SUMMARY
-          echo "- Backend image: built" >> $GITHUB_STEP_SUMMARY
-          echo "- Frontend image: built" >> $GITHUB_STEP_SUMMARY
+          echo "- **Lint**: passed (flake8)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Tests**: passed (pytest, 5 testow)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Backend image**: built" >> $GITHUB_STEP_SUMMARY
+          echo "- **Frontend image**: built" >> $GITHUB_STEP_SUMMARY
