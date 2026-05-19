@@ -44,6 +44,7 @@ jobs:
         run: flake8 --max-line-length=120 backend/src/
 
   # Job test: needs: lint → Checkout → Setup Python → pip install -r requirements.txt → pytest backend/tests/ -v
+  # ── Job 2: Test (po lincie) ──
   test:
     name: Tests (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
@@ -51,7 +52,7 @@ jobs:
     timeout-minutes: 5
     strategy:
       matrix:
-        python-version: [ "3.11", "3.12", "3.13" ]
+        python-version: ["3.11", "3.12", "3.13"]
     steps:
       - name: Checkout repozytorium
         uses: actions/checkout@v4
@@ -66,7 +67,21 @@ jobs:
         run: pip install -r backend/requirements.txt
 
       - name: Uruchomienie testow
-        run: pytest backend/tests/ -v
+        run: pytest backend/tests/ -v --junitxml=test-results.xml
+
+      - name: Upload raportu testow
+        if: matrix.python-version == '3.12'
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: test-results.xml
+          retention-days: 7
+
+      - name: Test Step Summary
+        run: |
+          echo "## Test Results (Python ${{ matrix.python-version }})" >> $GITHUB_STEP_SUMMARY
+          echo "- **Python version**: ${{ matrix.python-version }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status**: passed" >> $GITHUB_STEP_SUMMARY
 
   # Job build: needs: test → Checkout → Setup Python → pip install -r requirements.txt → docker build
   build:
