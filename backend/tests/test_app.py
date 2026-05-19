@@ -70,3 +70,38 @@ def test_add_item_empty_body(client):
         content_type="application/json",
     )
     assert response.status_code == 400
+
+
+# ── Test 6: Rabat — poprawne obliczenie ──
+def test_discount_calculation(client):
+    """POST /discount z poprawnymi danymi zwraca rabat"""
+    response = client.post(
+        "/discount",
+        data=json.dumps({"price": 100, "percent": 20}),
+        content_type="application/json",
+    )
+    assert response.status_code == 200
+    data = json.loads(response.data)
+    assert data["discounted"] == 80.0
+
+
+# ── Test 7: Rabat — brak pól ──
+def test_discount_missing_fields(client):
+    """POST /discount bez pól zwraca 400"""
+    response = client.post(
+        "/discount",
+        data=json.dumps({}),
+        content_type="application/json",
+    )
+    assert response.status_code == 400
+
+
+# ── Test 8: Rabat — procent poza zakresem ──
+def test_discount_invalid_percent(client):
+    """POST /discount z procentem > 100 zwraca 400"""
+    response = client.post(
+        "/discount",
+        data=json.dumps({"price": 100, "percent": 150}),
+        content_type="application/json",
+    )
+    assert response.status_code == 400

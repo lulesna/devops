@@ -136,6 +136,23 @@ def get_stats():
     })
 
 
+@app.route("/discount", methods=["POST"])
+def calculate_discount():
+    data = request.get_json(silent=True)
+
+    if not data or data.get("price") is None or data.get("percent") is None:
+        return jsonify({"error": "Wymagane pola: price, percent"}), 400
+
+    price = float(data["price"])
+    percent = float(data["percent"])
+
+    if percent < 0 or percent > 100:
+        return jsonify({"error": "Procent musi byc miedzy 0 a 100"}), 400
+
+    discounted = round(price * (1 - percent / 100), 2)
+    return jsonify({"original": price, "percent": percent, "discounted": discounted})
+
+
 @app.route("/health", methods=["GET"])
 def health():
     return jsonify({"status": "ok"})
