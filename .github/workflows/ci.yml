@@ -45,18 +45,21 @@ jobs:
 
   # Job test: needs: lint → Checkout → Setup Python → pip install -r requirements.txt → pytest backend/tests/ -v
   test:
-    name: Tests (pytest)
+    name: Tests (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
     needs: lint
     timeout-minutes: 5
+    strategy:
+      matrix:
+        python-version: [ "3.11", "3.12", "3.13" ]
     steps:
       - name: Checkout repozytorium
         uses: actions/checkout@v4
 
-      - name: Setup Python ${{ env.PYTHON_VERSION }}
+      - name: Setup Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          python-version: ${{ matrix.python-version }}
           cache: "pip"
 
       - name: Instalacja zaleznosci
