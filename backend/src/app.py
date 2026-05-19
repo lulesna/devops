@@ -138,7 +138,7 @@ def get_stats():
 
 @app.route("/health", methods=["GET"])
 def health():
-    return jsonify({"status": "broken"})
+    return jsonify({"status": "ok"})
 
 
 if __name__ == "__main__":
